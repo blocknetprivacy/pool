@@ -1,0 +1,23 @@
+{{template "layout" .}}
+{{define "content"}}
+<div class="stack">
+  <section class="panel">
+    <h2><span class="g">#</span> payouts</h2>
+    {{if .Payouts}}
+    <table>
+      <tr><th>address</th><th>amount</th><th>tx</th><th>time</th></tr>
+      {{range .Payouts}}
+      <tr>
+        <td class="mono"><a href="/miners/{{.Address}}">{{truncHash .Address}}</a></td>
+        <td class="g">{{formatCoins .Amount}}</td>
+        <td class="mono">{{truncHash .TxHash}}</td>
+        <td>{{timeAgo .Timestamp}}</td>
+      </tr>
+      {{end}}
+    </table>
+    {{else}}
+    <div class="d">No payouts yet.</div>
+    {{end}}
+  </section>
+</div>
+{{end}}

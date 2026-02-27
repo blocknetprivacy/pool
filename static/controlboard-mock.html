@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>blocknet pool - control board mock</title>
+  <meta name="robots" content="noindex,nofollow">
+  <style>
+    :root{
+      --bg:#000;
+      --fg:#fff;
+      --accent:#af0;
+      --line:#1e1e1e;
+      --panel:#070707;
+      --muted:#8d8d8d;
+      --muted2:#5f5f5f;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+
+    html,body{
+      width:100%;
+      height:100%;
+      background:var(--bg);
+      color:var(--fg);
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+    }
+
+    body{
+      overflow:hidden;
+      padding:clamp(12px,1.6vw,24px);
+    }
+
+    .board{
+      height:calc(100dvh - clamp(24px,3.2vw,48px));
+      border:1px solid #141414;
+      background:
+        linear-gradient(transparent 95%, #050505 95%) 0 0/100% 26px,
+        linear-gradient(90deg, transparent 95%, #050505 95%) 0 0/26px 100%,
+        var(--bg);
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      gap:clamp(10px,1.2vw,16px);
+      padding:clamp(12px,1.2vw,18px);
+    }
+
+    .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      border-bottom:1px solid var(--line);
+      padding-bottom:10px;
+    }
+
+    .brand{
+      font-size:clamp(20px,2.2vw,34px);
+      letter-spacing:.4px;
+      white-space:nowrap;
+    }
+
+    .brand .d{color:var(--accent)}
+
+    .meta{
+      color:var(--muted);
+      font-size:clamp(11px,1vw,13px);
+      text-align:right;
+      line-height:1.5;
+    }
+
+    .nav{
+      display:flex;
+      gap:10px;
+      border-bottom:1px solid var(--line);
+      padding-bottom:10px;
+    }
+
+    .tab{
+      border:1px solid #2a2a2a;
+      background:#050505;
+      color:var(--muted);
+      padding:8px 12px;
+      font-size:12px;
+      letter-spacing:.2px;
+    }
+
+    .tab.active{
+      color:var(--accent);
+      border-color:#3a4a0f;
+      background:#0a0c03;
+    }
+
+    .core{
+      min-height:0;
+      display:grid;
+      grid-template-columns:2fr 1.1fr;
+      gap:clamp(10px,1.1vw,16px);
+    }
+
+    .left{
+      min-height:0;
+      display:grid;
+      grid-template-rows:auto auto 1fr;
+      gap:clamp(10px,1vw,14px);
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(6,minmax(0,1fr));
+      gap:10px;
+    }
+
+    .card{
+      background:var(--panel);
+      border:1px solid #2a2a2a;
+      padding:10px 12px;
+      min-height:84px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:8px;
+    }
+
+    .label{
+      color:var(--muted2);
+      font-size:11px;
+      text-transform:lowercase;
+    }
+
+    .value{
+      font-size:clamp(18px,1.5vw,24px);
+      line-height:1;
+      color:var(--fg);
+    }
+
+    .value .a{color:var(--accent)}
+
+    .mid{
+      display:grid;
+      grid-template-columns:1.1fr 1fr;
+      gap:10px;
+      min-height:0;
+    }
+
+    .panel{
+      background:var(--panel);
+      border:1px solid #2a2a2a;
+      padding:12px;
+      display:grid;
+      grid-template-rows:auto 1fr;
+      gap:10px;
+      min-height:0;
+    }
+
+    .panel h3{
+      font-size:14px;
+      color:var(--fg);
+      font-weight:400;
+      border-bottom:1px dashed #2b2b2b;
+      padding-bottom:6px;
+    }
+
+    .code{
+      border:1px solid #38480f;
+      background:#0b0d05;
+      color:var(--accent);
+      padding:10px;
+      font-size:13px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      overflow:hidden;
+      white-space:nowrap;
+      text-overflow:ellipsis;
+    }
+
+    .copy{
+      border:1px solid #39490f;
+      background:#101406;
+      color:var(--accent);
+      padding:5px 8px;
+      font-size:11px;
+      white-space:nowrap;
+    }
+
+    .list{
+      display:grid;
+      gap:6px;
+      align-content:start;
+      min-height:0;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns:150px 1fr;
+      gap:10px;
+      border-bottom:1px solid #151515;
+      padding:7px 0;
+      font-size:12px;
+    }
+
+    .k{color:var(--muted2)}
+    .v{color:var(--fg)}
+    .a{color:var(--accent)}
+
+    .bottom-left{
+      min-height:0;
+      display:grid;
+      grid-template-columns:1fr .95fr;
+      gap:10px;
+    }
+
+    .right{
+      min-height:0;
+      display:grid;
+      grid-template-rows:1fr 1fr;
+      gap:10px;
+    }
+
+    .table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:12px;
+    }
+
+    .table th,.table td{
+      text-align:left;
+      border-bottom:1px solid #151515;
+      padding:6px 4px;
+      white-space:nowrap;
+    }
+
+    .table th{color:var(--muted2);font-weight:400}
+    .table .mono{font-size:11px}
+
+    .status{
+      display:inline-block;
+      border:1px solid #3a4a0f;
+      color:var(--accent);
+      padding:1px 6px;
+      font-size:10px;
+    }
+
+    .foot{
+      border-top:1px solid var(--line);
+      padding-top:8px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      font-size:11px;
+      color:var(--muted2);
+    }
+
+    .foot .a{font-size:11px}
+
+    @media (max-width:1200px){
+      .core{grid-template-columns:1fr}
+      .right{grid-template-columns:1fr 1fr;grid-template-rows:1fr}
+    }
+
+    @media (max-width:920px){
+      body{overflow:auto}
+      .board{height:auto;min-height:calc(100dvh - 24px)}
+      .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .mid,.bottom-left,.right{grid-template-columns:1fr}
+      .row{grid-template-columns:120px 1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="board">
+    <header class="top">
+      <div class="brand"><span class="d">$</span> blocknet pool</div>
+      <div class="meta">
+        <div>network: mainnet</div>
+        <div>mode: live mockup | theme: xeno control board</div>
+      </div>
+    </header>
+
+    <nav class="nav">
+      <div class="tab active">pool</div>
+      <div class="tab">blocks</div>
+      <div class="tab">payouts</div>
+      <div class="tab">miner lookup</div>
+    </nav>
+
+    <main class="core">
+      <section class="left">
+        <div class="stats">
+          <div class="card"><div class="label">pool hashrate</div><div class="value">28.7 <span class="a">KH/s</span></div></div>
+          <div class="card"><div class="label">miners</div><div class="value"><span class="a">43</span></div></div>
+          <div class="card"><div class="label">workers</div><div class="value">119</div></div>
+          <div class="card"><div class="label">blocks found</div><div class="value"><span class="a">12</span></div></div>
+          <div class="card"><div class="label">network height</div><div class="value">812</div></div>
+          <div class="card"><div class="label">difficulty</div><div class="value">44,497</div></div>
+        </div>
+
+        <div class="mid">
+          <section class="panel">
+            <h3><span class="a">#</span> connect</h3>
+            <div class="list">
+              <div class="code">
+                <span>stratum+tcp://bntpool.com:3333</span>
+                <span class="copy">copy</span>
+              </div>
+              <div class="row"><div class="k">payout scheme</div><div class="v a">pplns</div></div>
+              <div class="row"><div class="k">min payout</div><div class="v">0.10 BNT</div></div>
+              <div class="row"><div class="k">fee</div><div class="v">0%</div></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h3><span class="a">#</span> how to mine</h3>
+            <div class="list">
+              <div class="row"><div class="k">1. connect</div><div class="v">set pool endpoint to <span class="a">bntpool.com:3333</span></div></div>
+              <div class="row"><div class="k">2. login</div><div class="v">use your blocknet wallet address</div></div>
+              <div class="row"><div class="k">3. mine</div><div class="v">jobs stream automatically once subscribed</div></div>
+              <div class="row"><div class="k">note</div><div class="v">argon2id needs <span class="a">~2GB RAM per thread</span></div></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="bottom-left">
+          <section class="panel">
+            <h3><span class="a">#</span> shares</h3>
+            <div class="list">
+              <div class="row"><div class="k">accepted</div><div class="v a">1,254,744</div></div>
+              <div class="row"><div class="k">rejected</div><div class="v">438</div></div>
+              <div class="row"><div class="k">reject rate</div><div class="v">0.0349%</div></div>
+              <div class="row"><div class="k">last share</div><div class="v">2s ago</div></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h3><span class="a">#</span> lookup</h3>
+            <div class="list">
+              <div class="code">
+                <span>/miners/YOUR_ADDRESS</span>
+                <span class="copy">copy</span>
+              </div>
+              <div class="row"><div class="k">quick tip</div><div class="v">bookmark your miner URL for balance + worker stats</div></div>
+              <div class="row"><div class="k">example</div><div class="v mono a">/miners/XstwjC2grrn...QwvfZt9</div></div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <aside class="right">
+        <section class="panel">
+          <h3><span class="a">#</span> recent blocks</h3>
+          <table class="table">
+            <tr><th>height</th><th>finder</th><th>status</th></tr>
+            <tr><td class="a">811</td><td class="mono">XstwjC2...fZt9</td><td><span class="status">pending</span></td></tr>
+            <tr><td class="a">807</td><td class="mono">XstwjC2...fZt9</td><td><span class="status">confirmed</span></td></tr>
+            <tr><td class="a">803</td><td class="mono">Xk9Yv7n...1pwQ</td><td><span class="status">confirmed</span></td></tr>
+            <tr><td class="a">799</td><td class="mono">Xo3UaP1...k8mA</td><td><span class="status">confirmed</span></td></tr>
+          </table>
+        </section>
+
+        <section class="panel">
+          <h3><span class="a">#</span> recent payouts</h3>
+          <table class="table">
+            <tr><th>address</th><th>amount</th><th>time</th></tr>
+            <tr><td class="mono">XstwjC2...fZt9</td><td class="a">0.3200</td><td>2h ago</td></tr>
+            <tr><td class="mono">Xk9Yv7n...1pwQ</td><td class="a">1.1400</td><td>4h ago</td></tr>
+            <tr><td class="mono">Xo3UaP1...k8mA</td><td class="a">0.9200</td><td>9h ago</td></tr>
+            <tr><td class="mono">Xv4MzP0...y3Ld</td><td class="a">0.1800</td><td>1d ago</td></tr>
+          </table>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="foot">
+      <div>powered by <span class="a">blocknet</span></div>
+      <div>mockup only · 100vh responsive control board</div>
+    </footer>
+  </div>
+</body>
+</html>

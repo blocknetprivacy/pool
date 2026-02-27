@@ -1,0 +1,330 @@
+{{define "layout"}}<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{.MetaTitle}}</title>
+<link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16.png">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+<meta name="description" content="{{.MetaDescription}}">
+<link rel="canonical" href="{{.MetaURL}}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{.MetaSiteName}}">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="{{.MetaTitle}}">
+<meta property="og:description" content="{{.MetaDescription}}">
+<meta property="og:url" content="{{.MetaURL}}">
+<meta property="og:image" content="{{.MetaImage}}">
+<meta property="og:image:secure_url" content="{{.MetaImage}}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{{.MetaImageAlt}}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{.MetaTitle}}">
+<meta name="twitter:description" content="{{.MetaDescription}}">
+<meta name="twitter:image" content="{{.MetaImage}}">
+<meta name="twitter:image:alt" content="{{.MetaImageAlt}}">
+<meta name="theme-color" content="#000">
+<style>
+:root{
+  --bg:#000;
+  --fg:#fff;
+  --accent:#af0;
+  --line:#1e1e1e;
+  --panel:#070707;
+  --muted:#8d8d8d;
+  --muted2:#5f5f5f;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  width:100%;
+  height:100%;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+}
+body{
+  overflow:hidden;
+  padding:clamp(12px,1.6vw,24px);
+}
+a{color:var(--accent);text-decoration:none}
+.board{
+  height:calc(100dvh - clamp(24px,3.2vw,48px));
+  border:1px solid #141414;
+  background:var(--bg);
+  display:grid;
+  grid-template-rows:auto auto 1fr auto;
+  gap:clamp(10px,1.2vw,16px);
+  padding:clamp(12px,1.2vw,18px);
+}
+.top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  border-bottom:1px solid var(--line);
+  padding-bottom:10px;
+}
+.brand{
+  font-size:clamp(20px,2.2vw,34px);
+  letter-spacing:.4px;
+  white-space:nowrap;
+}
+.brand .d{color:var(--accent)}
+.meta{
+  color:var(--muted);
+  font-size:clamp(11px,1vw,13px);
+  text-align:right;
+  line-height:1.5;
+}
+.nav{
+  display:flex;
+  gap:10px;
+  border-bottom:1px solid var(--line);
+  padding-bottom:10px;
+}
+.tab{
+  border:1px solid #2a2a2a;
+  background:#050505;
+  color:var(--muted);
+  padding:8px 12px;
+  font-size:12px;
+  letter-spacing:.2px;
+}
+.tab.active{
+  color:var(--accent);
+  border-color:#3a4a0f;
+  background:#0a0c03;
+}
+.page-content{min-height:0;overflow:auto}
+.core{
+  min-height:0;
+  display:grid;
+  grid-template-columns:2fr 1.1fr;
+  gap:clamp(10px,1.1vw,16px);
+}
+.left{
+  min-height:0;
+  display:grid;
+  grid-template-rows:auto auto 1fr;
+  gap:clamp(10px,1vw,14px);
+}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:10px;
+}
+.card{
+  background:var(--panel);
+  border:1px solid #2a2a2a;
+  padding:10px 12px;
+  min-height:84px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:8px;
+}
+.label{
+  color:var(--muted2);
+  font-size:11px;
+  text-transform:lowercase;
+}
+.value{
+  font-size:clamp(18px,1.5vw,24px);
+  line-height:1;
+  color:var(--fg);
+}
+.value .a{color:var(--accent)}
+.mid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  min-height:0;
+}
+.panel{
+  background:var(--panel);
+  border:1px solid #2a2a2a;
+  padding:12px;
+  display:grid;
+  grid-template-rows:auto 1fr;
+  gap:10px;
+  min-height:0;
+}
+.panel h3{
+  font-size:14px;
+  color:var(--fg);
+  font-weight:400;
+  border-bottom:1px dashed #2b2b2b;
+  padding-bottom:6px;
+}
+.action-bar{
+  border:1px solid #39490f;
+  background:#0b0d05;
+  color:var(--accent);
+  padding:8px 10px;
+  font-size:13px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  align-items:center;
+}
+.action-text{
+  min-width:0;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.action-input{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:var(--accent);
+  font:13px/1.3 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  padding:0;
+  outline:none;
+}
+.action-input::placeholder{color:#6f8a3a}
+.action-btn{
+  border:1px solid #39490f;
+  background:#101406;
+  color:var(--accent);
+  padding:6px 10px;
+  font-size:11px;
+  white-space:nowrap;
+  cursor:pointer;
+}
+.list{
+  display:grid;
+  gap:6px;
+  align-content:start;
+  min-height:0;
+}
+.row{
+  display:grid;
+  grid-template-columns:150px 1fr;
+  gap:10px;
+  border-bottom:1px solid #151515;
+  padding:7px 0;
+  font-size:12px;
+}
+.k{color:var(--muted2)}
+.v{color:var(--fg)}
+.a{color:var(--accent)}
+.bottom-left{
+  min-height:0;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.right{
+  min-height:0;
+  display:grid;
+  grid-template-rows:1fr 1fr;
+  gap:10px;
+}
+.table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
+}
+.table th,.table td{
+  text-align:left;
+  border-bottom:1px solid #151515;
+  padding:6px 4px;
+  white-space:nowrap;
+}
+.table th{color:var(--muted2);font-weight:400}
+.table .mono{font-size:11px}
+.status{
+  display:inline-block;
+  border:1px solid #3a4a0f;
+  color:var(--accent);
+  padding:1px 6px;
+  font-size:10px;
+}
+.status.pending{color:#ffd162;border-color:#6b541c}
+.status.orphan{color:#ff6f6f;border-color:#5f2929}
+.foot{
+  border-top:1px solid var(--line);
+  padding-top:8px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  font-size:11px;
+  color:var(--muted2);
+}
+.foot .a{font-size:11px}
+/* Keep legacy classes for non-index pages */
+h2{font-size:16px;color:var(--fg);font-weight:400;border-bottom:1px dashed #2b2b2b;padding-bottom:8px;margin:0 0 10px}
+.g{color:var(--accent)}
+.d{color:var(--muted2)}
+.spec{display:grid;grid-template-columns:150px 1fr;gap:10px;border-bottom:1px solid #151515;padding:7px 0;font-size:12px}
+.spec:last-child{border-bottom:0}
+.spec-k{color:var(--muted2)}
+.spec-v{color:var(--fg)}
+.stack{display:grid;gap:10px}
+.mono{font-size:11px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{text-align:left;border-bottom:1px solid #151515;padding:6px 4px;white-space:nowrap}
+th{color:var(--muted2);font-weight:400}
+td{color:var(--fg)}
+td.mono{font-size:11px}
+.tag{display:inline-block;border:1px solid #3a4a0f;color:var(--accent);padding:1px 6px;font-size:10px}
+.tag-pending{color:#ffd162;border-color:#6b541c}
+.tag-orphan{color:#ff6f6f;border-color:#5f2929}
+@media (max-width:1200px){
+  .core{grid-template-columns:1fr}
+  .right{grid-template-columns:1fr 1fr;grid-template-rows:1fr}
+}
+@media (max-width:920px){
+  body{overflow:auto}
+  .board{height:auto;min-height:calc(100dvh - 24px)}
+  .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .mid,.bottom-left,.right{grid-template-columns:1fr}
+  .row{grid-template-columns:120px 1fr}
+}
+</style>
+</head>
+<body>
+<div class="board">
+  <header class="top">
+    <div class="brand"><span class="d">$</span> {{.PoolName}}</div>
+  </header>
+  <nav class="nav">
+    <a class="tab {{if eq .CurrentPage "pool"}}active{{end}}" href="/">pool</a>
+    <a class="tab {{if eq .CurrentPage "blocks"}}active{{end}}" href="/blocks">blocks</a>
+    <a class="tab {{if eq .CurrentPage "payouts"}}active{{end}}" href="/payouts">payouts</a>
+  </nav>
+  <main class="page-content">
+    {{template "content" .}}
+  </main>
+  <footer class="foot">
+    <div>powered by <a href="https://github.com/blocknetprivacy/blocknet">blocknet</a></div>
+  </footer>
+</div>
+<script>
+document.addEventListener('click', async (e) => {
+  const btn = e.target.closest('[data-copy-text]');
+  if (!btn) return;
+  const text = btn.getAttribute('data-copy-text') || '';
+  if (!text) return;
+  try {
+    await navigator.clipboard.writeText(text);
+    const original = btn.textContent;
+    btn.textContent = 'copied';
+    setTimeout(() => {
+      btn.textContent = original;
+    }, 900);
+  } catch (_) {
+    const original = btn.textContent;
+    btn.textContent = 'failed';
+    setTimeout(() => {
+      btn.textContent = original;
+    }, 900);
+  }
+});
+</script>
+</body>
+</html>{{end}}

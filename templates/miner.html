@@ -1,0 +1,42 @@
+{{template "layout" .}}
+{{define "content"}}
+<div class="stack">
+  <section class="panel">
+    <h2><span class="g">#</span> miner</h2>
+    <div class="spec"><span class="spec-k">address</span><span class="spec-v g" style="word-break:break-all">{{.Address}}</span></div>
+    {{if .MinerStats}}
+    <div class="spec"><span class="spec-k">hashrate</span><span class="spec-v">{{formatHashrate .MinerHashrate}}</span></div>
+    <div class="spec"><span class="spec-k">shares accepted</span><span class="spec-v g">{{.MinerStats.SharesAccepted}}</span></div>
+    <div class="spec"><span class="spec-k">shares rejected</span><span class="spec-v">{{.MinerStats.SharesRejected}}</span></div>
+    <div class="spec"><span class="spec-k">blocks found</span><span class="spec-v g">{{.MinerStats.BlocksFound}}</span></div>
+    <div class="spec"><span class="spec-k">workers</span><span class="spec-v">{{len .MinerStats.Workers}}</span></div>
+    {{else}}
+    <div class="spec"><span class="spec-k">status</span><span class="spec-v">no data - miner has not connected</span></div>
+    {{end}}
+  </section>
+
+  {{if .Balance}}
+  <section class="panel">
+    <h2><span class="g">#</span> balance</h2>
+    <div class="spec"><span class="spec-k">pending</span><span class="spec-v g">{{formatCoins .Balance.Pending}}</span></div>
+    <div class="spec"><span class="spec-k">total paid</span><span class="spec-v">{{formatCoins .Balance.Paid}}</span></div>
+  </section>
+  {{end}}
+
+  {{if .RecentShares}}
+  <section class="panel">
+    <h2><span class="g">#</span> recent shares</h2>
+    <table>
+      <tr><th>time</th><th>difficulty</th><th>job</th></tr>
+      {{range .RecentShares}}
+      <tr>
+        <td>{{timeAgo .Timestamp}}</td>
+        <td>{{.Difficulty}}</td>
+        <td class="mono">{{.JobID}}</td>
+      </tr>
+      {{end}}
+    </table>
+  </section>
+  {{end}}
+</div>
+{{end}}

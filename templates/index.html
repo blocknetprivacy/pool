@@ -1,0 +1,102 @@
+{{template "layout" .}}
+{{define "content"}}
+<main class="core">
+  <section class="left">
+    <div class="stats">
+      <div class="card"><div class="label">pool hashrate</div><div class="value">{{formatHashrate .PoolHashrate}}</div></div>
+      <div class="card"><div class="label">miners</div><div class="value"><span class="a">{{.ConnectedMiners}}</span></div></div>
+      <div class="card"><div class="label">workers</div><div class="value">{{.ConnectedWorkers}}</div></div>
+      <div class="card"><div class="label">blocks found</div><div class="value"><span class="a">{{.TotalBlocksFound}}</span></div></div>
+      <div class="card"><div class="label">network height</div><div class="value">{{.NetworkHeight}}</div></div>
+      <div class="card"><div class="label">difficulty</div><div class="value">{{.NetworkDifficulty}}</div></div>
+    </div>
+
+    <div class="mid">
+      <section class="panel">
+        <h3><span class="a">#</span> connect</h3>
+        <div class="list">
+          <div class="action-bar">
+            <span class="action-text">stratum+tcp://{{.StratumEndpoint}}</span>
+            <button class="action-btn" type="button" data-copy-text="stratum+tcp://{{.StratumEndpoint}}" aria-label="Copy stratum endpoint">copy</button>
+          </div>
+          <div class="row"><div class="k">payout scheme</div><div class="v a">{{.PayoutScheme}}</div></div>
+          <div class="row"><div class="k">min payout</div><div class="v">{{.MinPayout}} BNT</div></div>
+          <div class="row"><div class="k">fee</div><div class="v">{{if gt .PoolFeeFlat 0.0}}{{.PoolFeeFlat}} BNT + {{end}}{{.PoolFeePct}}%</div></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3><span class="a">#</span> how to mine</h3>
+        <div class="list">
+          <div class="row"><div class="k">1. connect</div><div class="v">set pool endpoint to <span class="a">{{.StratumEndpoint}}</span></div></div>
+          <div class="row"><div class="k">2. login</div><div class="v">use your blocknet wallet address</div></div>
+          <div class="row"><div class="k">3. mine</div><div class="v">jobs stream automatically once subscribed</div></div>
+          <div class="row"><div class="k">note</div><div class="v">argon2id needs <span class="a">~2GB RAM per thread</span></div></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="bottom-left">
+      <section class="panel">
+        <h3><span class="a">#</span> shares</h3>
+        <div class="list">
+          <div class="row"><div class="k">accepted</div><div class="v a">{{.TotalSharesAccepted}}</div></div>
+          <div class="row"><div class="k">rejected</div><div class="v">{{.TotalSharesRejected}}</div></div>
+          <div class="row"><div class="k">reject rate</div><div class="v">{{.RejectRate}}</div></div>
+          <div class="row"><div class="k">last share</div><div class="v">{{.LastShareAgo}}</div></div>
+        </div>
+      </section>
+
+      <section class="panel" id="lookup">
+        <h3><span class="a">#</span> lookup</h3>
+        <div class="list">
+          <form class="action-bar" onsubmit="event.preventDefault(); const a=document.getElementById('lookup-address').value.trim(); if(!a){return;} window.location.href='/miners/'+encodeURIComponent(a);">
+            <input id="lookup-address" class="action-input" type="text" autocomplete="off" spellcheck="false" placeholder="paste full wallet address">
+            <button class="action-btn" type="submit">open</button>
+          </form>
+          <div class="row"><div class="k">path</div><div class="v mono a">/miners/&lt;full_wallet_address&gt;</div></div>
+          <div class="row"><div class="k">tip</div><div class="v">Paste your Blocknet wallet address and press open.</div></div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <aside class="right">
+    <section class="panel">
+      <h3><span class="a">#</span> recent blocks</h3>
+      {{if .RecentBlocks}}
+      <table class="table">
+        <tr><th>height</th><th>finder</th><th>status</th></tr>
+        {{range .RecentBlocks}}
+        <tr>
+          <td class="a">{{.Height}}</td>
+          <td class="mono"><a href="/miners/{{.Finder}}">{{truncHash .Finder}}</a></td>
+          <td>{{if .Orphaned}}<span class="status orphan">orphan</span>{{else if .Confirmed}}<span class="status">confirmed</span>{{else}}<span class="status pending">pending</span>{{end}}</td>
+        </tr>
+        {{end}}
+      </table>
+      {{else}}
+      <table class="table"><tr><td class="k">No blocks found yet.</td></tr></table>
+      {{end}}
+    </section>
+
+    <section class="panel">
+      <h3><span class="a">#</span> recent payouts</h3>
+      {{if .RecentPayouts}}
+      <table class="table">
+        <tr><th>address</th><th>amount</th><th>time</th></tr>
+        {{range .RecentPayouts}}
+        <tr>
+          <td class="mono"><a href="/miners/{{.Address}}">{{truncHash .Address}}</a></td>
+          <td class="a">{{formatCoins .Amount}}</td>
+          <td>{{timeAgo .Timestamp}}</td>
+        </tr>
+        {{end}}
+      </table>
+      {{else}}
+      <table class="table"><tr><td class="k">No payouts yet.</td></tr></table>
+      {{end}}
+    </section>
+  </aside>
+</main>
+{{end}}

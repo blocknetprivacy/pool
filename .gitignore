@@ -1,0 +1,35 @@
+# --- OS / editor ---
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Go build outputs ---
+bin/
+dist/
+build/
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+
+# --- Go tooling ---
+coverage.out
+*.coverprofile
+
+# --- Runtime / local data ---
+config.json
+pool.db
+*.db
+*.sqlite
+*.sqlite3
+*.log
+
+# --- Environment files ---
+.env
+.env.*
+docs
+api_*.json
+blocknet-pool

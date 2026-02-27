@@ -1,0 +1,25 @@
+{{template "layout" .}}
+{{define "content"}}
+<div class="stack">
+  <section class="panel">
+    <h2><span class="g">#</span> blocks found</h2>
+    {{if .Blocks}}
+    <table>
+      <tr><th>height</th><th>hash</th><th>finder</th><th>difficulty</th><th>time</th><th>status</th></tr>
+      {{range .Blocks}}
+      <tr>
+        <td class="g">{{.Height}}</td>
+        <td class="mono">{{truncHash .Hash}}</td>
+        <td class="mono"><a href="/miners/{{.Finder}}">{{truncHash .Finder}}</a></td>
+        <td>{{.Difficulty}}</td>
+        <td>{{timeAgo .Timestamp}}</td>
+        <td>{{if .Orphaned}}<span class="tag tag-orphan">orphan</span>{{else if .PaidOut}}<span class="tag">paid</span>{{else if .Confirmed}}<span class="tag">confirmed</span>{{else}}<span class="tag tag-pending">pending</span>{{end}}</td>
+      </tr>
+      {{end}}
+    </table>
+    {{else}}
+    <div class="d">No blocks found yet.</div>
+    {{end}}
+  </section>
+</div>
+{{end}}
